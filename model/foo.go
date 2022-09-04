@@ -3,7 +3,7 @@ package model
 type Foo struct {
 	ID        int
 	Title     string
-	Price     string
+	Price     float64
 	CreatedAt string
 	UpdatedAt string
 }
