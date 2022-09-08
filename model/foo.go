@@ -1,7 +1,7 @@
 package model
 
 type Foo struct {
-	ID        int
+	ID        int `gorm:"primaryKey"`
 	Title     string
 	Price     float64
 	CreatedAt string
