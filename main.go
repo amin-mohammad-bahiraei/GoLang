@@ -9,5 +9,5 @@ import (
 func main() {
 	initController := controller.InitController()
 	initController.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	initController.Run(":8080")
+	initController.Run()
 }

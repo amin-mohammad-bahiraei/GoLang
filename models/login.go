@@ -1,4 +1,4 @@
-package model
+package models
 
 type Login struct {
 	UserName string `form:"username" json:"userName" binding:"required"`

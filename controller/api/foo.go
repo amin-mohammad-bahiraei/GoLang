@@ -1,32 +1,29 @@
 package api
 
 import (
-	"GoLang/database"
-	"GoLang/model"
+	"GoLang/config"
+	"GoLang/models"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func GetListFoo(c *gin.Context) {
-	results := database.DB().First(&model.Foo{})
-	if results != nil {
-		fmt.Println(results)
+	foo := make([]models.Foo, 0)
+	if config.Database.Find(&foo).Error != nil {
+		fmt.Println("Error Get List Foo")
 	}
-	foo := []model.Foo{
-		{ID: 1, Title: "title_1", Price: 4, CreatedAt: "a", UpdatedAt: "d"},
-		{ID: 3, Title: "title_2", Price: 3, CreatedAt: "b", UpdatedAt: "c"},
-		{ID: 2, Title: "title_3", Price: 2, CreatedAt: "c", UpdatedAt: "b"},
-		{ID: 4, Title: "title_4", Price: 1, CreatedAt: "d", UpdatedAt: "a"},
-	}
-	fmt.Println(foo)
 	c.JSON(http.StatusOK, foo)
 }
 
 func GetFooById(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]string{
-		"message": "ok",
-	})
+	foo := models.Foo{}
+	id := c.Param("id")
+	if config.Database.Where("id = ?", id).First(&foo).Error != nil {
+		c.JSON(http.StatusOK, nil)
+	} else {
+		c.JSON(http.StatusOK, foo)
+	}
 }
 
 func CreateFoo(c *gin.Context) {
