@@ -19,11 +19,12 @@ func GetListFoo(c *gin.Context) {
 func GetFooById(c *gin.Context) {
 	foo := models.Foo{}
 	id := c.Param("id")
-	if config.Database.Where("id = ?", id).First(&foo).Error != nil {
-		c.JSON(http.StatusOK, nil)
-	} else {
-		c.JSON(http.StatusOK, foo)
+	err := config.Database.Where("id = ?", id).First(&foo)
+	if err != nil {
+		c.JSON(http.StatusOK, err)
+		return
 	}
+	c.JSON(http.StatusOK, foo)
 }
 
 func CreateFoo(c *gin.Context) {

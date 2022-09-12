@@ -1,32 +1,16 @@
 package api
 
 import (
+	"GoLang/config"
+	"GoLang/models"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func Login(c *gin.Context) {
-	//var sampleSecretKey = []byte("SecretYouShouldHide")
-	//token := jwt.New(jwt.SigningMethodEdDSA)
-	//claims := token.Claims.(jwt.MapClaims)
-	//claims["exp"] = time.Now().Add(10 * time.Minute)
-	//claims["authorized"] = true
-	//claims["user"] = "username"
-
-	//tokenString, err := token.SignedString(sampleSecretKey)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//fmt.Println(tokenString)
-	//sh1 := sha256.New()
-	//sh1.Write([]byte("amin"))
-	//
-	//sh2 := sha256.New()
-	//sh2.Write([]byte("amin"))
-
-	//fmt.Println(sh2.s)
 	data1 := []byte("hello")
 	hash1 := sha256.Sum256(data1)
 
@@ -34,8 +18,42 @@ func Login(c *gin.Context) {
 	hash2 := sha256.Sum256(data2)
 
 	fmt.Println(hash1 == hash2)
-
 	c.JSON(http.StatusOK, map[string]string{
 		"message": "ok",
 	})
+}
+
+func Register(c *gin.Context) {
+	var user models.User
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Response{
+			Message:   err,
+			ErrorCode: 1,
+			Data:      nil,
+		})
+		return
+	}
+
+	if user.Password != "" {
+		hash2 := sha256.Sum256([]byte(user.Password))
+		user.Password = hex.EncodeToString(hash2[:])
+	}
+
+	err = config.Database.Create(&user).Error
+	if err != nil {
+		c.JSON(http.StatusBadGateway, models.Response{
+			Message:   err,
+			ErrorCode: 2,
+			Data:      nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Message:   nil,
+		ErrorCode: nil,
+		Data:      user,
+	})
+
 }

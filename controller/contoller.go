@@ -12,5 +12,6 @@ func InitController() *gin.Engine {
 	apiGroup.GET("/GetFooById/:id", api.GetFooById)
 
 	apiGroup.GET("/auth/login", api.Login)
+	apiGroup.POST("/auth/register", api.Register)
 	return r
 }
