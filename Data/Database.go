@@ -1,4 +1,4 @@
-package config
+package Data
 
 import (
 	"GoLang/models"
@@ -15,8 +15,8 @@ func init() {
 	if err != nil {
 		fmt.Printf("Error Database: %s \n", err)
 	} else {
-		Database.AutoMigrate(&models.User{})
-		Database.AutoMigrate(&models.Foo{})
+		Database.AutoMigrate(&Models.User{})
+		Database.AutoMigrate(&Models.Foo{})
 	}
 	fmt.Println("Database connection successful.")
 }

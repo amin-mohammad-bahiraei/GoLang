@@ -1,10 +1,10 @@
-package models
+package Models
 
 import "time"
 
 type User struct {
 	ID          int    `gorm:"primaryKey"`
-	UserName    string `gorm:"unique"`
+	Username    string `gorm:"unique"`
 	Password    string
 	Name        string
 	Family      string

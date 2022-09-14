@@ -1,4 +1,4 @@
-package models
+package Models
 
 type Foo struct {
 	ID        int `gorm:"primaryKey"`
