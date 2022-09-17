@@ -1,7 +1,8 @@
 package Api
 
 import (
-	"GoLang/api/Controllers"
+	"GoLang/Api/Controllers"
+
 	"github.com/gin-gonic/gin"
 )
 

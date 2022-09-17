@@ -4,7 +4,7 @@ import (
 	"GoLang/Data"
 	"GoLang/Middleware"
 	"GoLang/Models"
-	"GoLang/services"
+	"GoLang/Services"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
