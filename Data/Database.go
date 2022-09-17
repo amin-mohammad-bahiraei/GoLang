@@ -1,7 +1,7 @@
 package Data
 
 import (
-	"GoLang/models"
+	"GoLang/Models"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,7 +16,7 @@ func init() {
 		fmt.Printf("Error Database: %s \n", err)
 	} else {
 		Database.AutoMigrate(&Models.User{})
-		Database.AutoMigrate(&Models.Foo{})
+		Database.AutoMigrate(&Models.Product{})
 	}
 	fmt.Println("Database connection successful.")
 }

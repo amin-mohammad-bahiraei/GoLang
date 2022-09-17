@@ -1,10 +1,9 @@
 package Controllers
 
 import (
-	"GoLang/Api"
-	"GoLang/data"
-	"GoLang/middleware"
-	"GoLang/models"
+	"GoLang/Data"
+	"GoLang/Middleware"
+	"GoLang/Models"
 	"GoLang/services"
 	"encoding/json"
 	"fmt"
@@ -13,13 +12,10 @@ import (
 	"net/http"
 )
 
-var Db *gorm.DB
+var db *gorm.DB
 
 func init() {
-	Db = Data.Database
-	router := Api.Router
-	router.GET("/Auth/SignIn", SignIn)
-	router.GET("/Auth/SignIn", SignUp)
+	db = Data.Database
 }
 
 func SignUp(c *gin.Context) {
@@ -35,7 +31,7 @@ func SignUp(c *gin.Context) {
 		return
 	}
 	var dbUser Models.User
-	Db.Where("username = ? or phone_number = ?", user.Username, user.PhoneNumber).First(&dbUser)
+	db.Where("username = ? or phone_number = ?", user.Username, user.PhoneNumber).First(&dbUser)
 	fmt.Println(dbUser)
 	if dbUser.Username != "" || dbUser.PhoneNumber != "" {
 		c.JSON(http.StatusBadRequest, Models.Response{
@@ -47,7 +43,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	user.Password = Services.GenerateHash(user.Password)
-	Db.Create(&user)
+	db.Create(&user)
 	c.JSON(http.StatusBadRequest, Models.Response{
 		Message:   "",
 		ErrorCode: 0,
@@ -67,7 +63,7 @@ func SignIn(c *gin.Context) {
 		return
 	}
 	var user Models.User
-	Db.Where("username = ?", login.Username).First(&user)
+	db.Where("username = ?", login.Username).First(&user)
 	if user.Username == "" {
 		c.JSON(http.StatusBadRequest, Models.Response{
 			Message:   "username or password is incorrect",
@@ -86,5 +82,10 @@ func SignIn(c *gin.Context) {
 	}
 
 	validToken, err := Middleware.GenerateToken(login.Username)
+	c.JSON(http.StatusBadRequest, Models.Response{
+		Message:   "",
+		ErrorCode: 0,
+		Data:      validToken,
+	})
 	fmt.Println(validToken)
 }
