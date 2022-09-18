@@ -2,7 +2,6 @@ package Api
 
 import (
 	"GoLang/Api/Controllers"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +15,7 @@ func init() {
 
 	Api.POST("/Auth/SignUp", Controllers.SignUp)
 	Api.POST("/Auth/SignIn", Controllers.SignIn)
+	Api.GET("/Auth/GetUserByUsername/:username", Controllers.GetUserByUsername)
 
 	Api.GET("/Product/GetProductList", Controllers.GetProductList)
 }

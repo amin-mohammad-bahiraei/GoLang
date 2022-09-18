@@ -4,18 +4,25 @@ import (
 	"GoLang/Data"
 	"GoLang/Middleware"
 	"GoLang/Models"
+	"GoLang/Redis"
 	"GoLang/Services"
+	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v9"
+	"gorm.io/gorm"
 )
 
 var db *gorm.DB
+var rdb *redis.Client
+var ctx context.Context
 
 func init() {
 	db = Data.Database
+	rdb = Redis.Redis
+	ctx = context.Background()
 }
 
 func SignUp(c *gin.Context) {
@@ -32,7 +39,6 @@ func SignUp(c *gin.Context) {
 	}
 	var dbUser Models.User
 	db.Where("username = ? or phone_number = ?", user.Username, user.PhoneNumber).First(&dbUser)
-	fmt.Println(dbUser)
 	if dbUser.Username != "" || dbUser.PhoneNumber != "" {
 		c.JSON(http.StatusBadRequest, Models.Response{
 			Message:   "username is already exist",
@@ -87,5 +93,33 @@ func SignIn(c *gin.Context) {
 		ErrorCode: 0,
 		Data:      validToken,
 	})
-	fmt.Println(validToken)
+}
+
+func GetUserByUsername(c *gin.Context) {
+	if err := Middleware.IsAuthorized(c); err != nil {
+		return
+	}
+	username := c.Params.ByName("username")
+	val, err := rdb.Get(ctx, username).Result()
+
+	if err != nil {
+		var user Models.User
+		db.Where("username = ?", username).First(&user)
+
+		strUser, _ := json.Marshal(user)
+		rdb.Set(ctx, user.Username, string(strUser), 0)
+
+		c.JSON(http.StatusOK, Models.Response{
+			Data: user,
+		})
+		return
+	} else {
+		var user Models.User
+		json.Unmarshal([]byte(val), &user)
+		c.JSON(http.StatusOK, Models.Response{
+			Data: user,
+		})
+		return
+	}
+
 }
