@@ -9,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v9"
@@ -48,7 +49,7 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	user.Password = Services.GenerateHash(user.Password)
+	user.Password = Services.GenerateHash(user.Password + os.Getenv("SECRET_KEY"))
 	db.Create(&user)
 	c.JSON(http.StatusBadRequest, Models.Response{
 		Message:   "",
@@ -78,7 +79,7 @@ func SignIn(c *gin.Context) {
 		})
 		return
 	}
-	if user.Password != Services.GenerateHash(login.Password) {
+	if user.Password != Services.GenerateHash(login.Password+os.Getenv("SECRET_KEY")) {
 		c.JSON(http.StatusBadRequest, Models.Response{
 			Message:   "username or password is incorrect",
 			ErrorCode: 1,

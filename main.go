@@ -1,9 +1,18 @@
 package main
 
-import "GoLang/Api"
+import (
+	"GoLang/Api"
+	"fmt"
+	"github.com/joho/godotenv"
+)
 
 func main() {
-	api := Api.Api
-	api.Run()
+	if err := godotenv.Load(".env"); err != nil {
+		fmt.Println(err)
+	}
 
+	api := Api.Api
+	if err := api.Run(); err != nil {
+		fmt.Println(err)
+	}
 }
